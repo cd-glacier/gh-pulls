@@ -1,35 +1,37 @@
 #!/usr/bin/env bash
 set -e
 
-echo "Hello gh-pulls!"
+if [[ $(tput lines) > 35 ]]; then
+  preview_height=30
+elif [[ $(tput lines) > 25 ]]; then
+  preview_height=20
+else
+  preview_height=0
+fi
 
-# Snippets to help get started:
+if [ "$args" == "mine" ]; then
+  GH_FORCE_TTY='100%' gh pr list --assignee @me --limit 100 | \
+    tail -n +4 | \
+    fzf --ansi \
+      --preview-window down:30 \
+      --bind ctrl-d:preview-down \
+      --bind ctrl-u:preview-up \
+      -m \
+      --preview 'GH_FORCE_TTY=$FZF_PREVIEW_COLUMNS gh pr view {1} | bat -p --color always -l md' |
+    awk '{print $1}' |
+    tr -d '#' |
+    xargs -I {} gh pr view --web {}
+else
+  GH_FORCE_TTY='100%' gh pr list --state all --limit 100 | \
+    tail -n +4 | \
+    fzf --ansi \
+      --preview-window down:30 \
+      --bind ctrl-d:preview-down \
+      --bind ctrl-u:preview-up \
+      -m \
+      --preview 'GH_FORCE_TTY=$FZF_PREVIEW_COLUMNS gh pr view {1} | bat -p --color always -l md' |
+    awk '{print $1}' |
+    tr -d '#' |
+    xargs -I {} gh pr view --web {}
+fi
 
-# Determine if an executable is in the PATH
-# if ! type -p ruby >/dev/null; then
-#   echo "Ruby not found on the system" >&2
-#   exit 1
-# fi
-
-# Pass arguments through to another command
-# gh issue list "$@" -R cli/cli
-
-# Using the gh api command to retrieve and format information
-# QUERY='
-#   query($endCursor: String) {
-#     viewer {
-#       repositories(first: 100, after: $endCursor) {
-#         nodes {
-#           nameWithOwner
-#           stargazerCount
-#         }
-#       }
-#     }
-#   }
-# '
-# TEMPLATE='
-#   {{- range $repo := .data.viewer.repositories.nodes -}}
-#     {{- printf "name: %s - stargazers: %v\n" $repo.nameWithOwner $repo.stargazerCount -}}
-#   {{- end -}}
-# '
-# exec gh api graphql -f query="${QUERY}" --paginate --template="${TEMPLATE}"
