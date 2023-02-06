@@ -13,7 +13,7 @@ if [ "$args" == "mine" ]; then
   GH_FORCE_TTY='100%' gh pr list --assignee @me --limit 100 | \
     tail -n +4 | \
     fzf --ansi \
-      --preview-window down:30 \
+      --preview-window down:$preview_height \
       --bind ctrl-d:preview-down \
       --bind ctrl-u:preview-up \
       -m \
@@ -25,7 +25,7 @@ else
   GH_FORCE_TTY='100%' gh pr list --state all --limit 100 | \
     tail -n +4 | \
     fzf --ansi \
-      --preview-window down:30 \
+      --preview-window down:$preview_height \
       --bind ctrl-d:preview-down \
       --bind ctrl-u:preview-up \
       -m \
