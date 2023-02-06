@@ -25,6 +25,6 @@ gh pulls
 
 
 ```
-gh pulls mine
+gh pulls --me
 ```
 

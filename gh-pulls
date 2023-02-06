@@ -9,7 +9,7 @@ else
   preview_height=0
 fi
 
-if [ "$args" == "mine" ]; then
+if [ "$args" == "--me" || "$args" == "-me" ]; then
   GH_FORCE_TTY='100%' gh pr list --assignee @me --limit 100 | \
     tail -n +4 | \
     fzf --ansi \
